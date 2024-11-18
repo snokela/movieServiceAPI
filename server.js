@@ -46,6 +46,11 @@ app.get('/movies', (req, res) => {
   res.send('All movies retrieved succesfully');
 });
 
+// add movie review -endpoint
+app.post('/reviews', (req, res) => {
+  res.send('Movie review added');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
