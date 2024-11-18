@@ -21,6 +21,12 @@ app.post('/movies', (req, res) => {
   res.send('Movie added succesfully');
 });
 
+
+// add registering user (accounts)
+app.post('/register', (req, res) => {
+  res.json('User registered successfully');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
