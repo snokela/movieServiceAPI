@@ -56,11 +56,12 @@ app.post('/favorites', (req, res) => {
   res.send('Favorite movie added for user');
 });
 
-// 16. get favorite movies by username
+// get favorite movies by username
 app.get('/favorites/:username', (req, res) => {
   res.send('Favorite movies retrieved by username');
 });
 
+// Start the server and listen on the specified port
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
