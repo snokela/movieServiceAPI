@@ -36,6 +36,11 @@ app.delete('/movies/:id', (req, res) => {
   res.send('The movie has been deleted');
 });
 
+// get all movies -endpoint
+app.get('/movies', (req, res) => {
+  res.send('All movies retrieved succesfully');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
