@@ -26,6 +26,11 @@ app.post('/register', (req, res) => {
   res.send('User registered successfully');
 });
 
+// get movie by keyword -endpoint
+app.get('/movies/search', (req, res) => {
+  res.send('Movie search completed successfully');
+});
+
 // get movie by id -endpoint
 app.get('/movies/:id', (req, res) => {
   res.send('Movie retrieved successfully by ID');
