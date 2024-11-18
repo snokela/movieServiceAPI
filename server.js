@@ -21,10 +21,14 @@ app.post('/movies', (req, res) => {
   res.send('Movie added succesfully');
 });
 
-
-// add registering user (accounts)
+// add registering user (accounts) -endpoint
 app.post('/register', (req, res) => {
-  res.json('User registered successfully');
+  res.send('User registered successfully');
+});
+
+// get movie by id -endpoint
+app.get('/movies/:id', (req, res) => {
+  res.send('Movie retrieved successfully by ID');
 });
 
 app.listen(port, () => {
