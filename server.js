@@ -51,6 +51,11 @@ app.post('/reviews', (req, res) => {
   res.send('Movie review added');
 });
 
+// add favorite movies for user -endpoint
+app.post('/favorites', (req, res) => {
+  res.send('Favorite movie added for user');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
