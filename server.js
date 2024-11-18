@@ -2,7 +2,7 @@ import express from 'express';
 
 var app = express();
 
-const port = process.env.PORT  || 3001;
+const port = process.env.PORT || 3001;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -14,6 +14,11 @@ app.get('/', (req, res) => {
 // add movie genre -endpoint
 app.post('/genres', (req, res) => {
   res.send('Genre added successfully');
+});
+
+// add new movie -endpoint
+app.post('/movies', (req, res) => {
+  res.send('Movie added succesfully');
 });
 
 app.listen(port, () => {
