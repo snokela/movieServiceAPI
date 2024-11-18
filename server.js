@@ -31,6 +31,11 @@ app.get('/movies/:id', (req, res) => {
   res.send('Movie retrieved successfully by ID');
 });
 
+// remove movie by id -endpoint
+app.delete('/movies/:id', (req, res) => {
+  res.send('The movie has been deleted');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
