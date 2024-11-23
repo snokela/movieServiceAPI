@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Movie API');
 });
 
-// add movie genre -endpoint
+// add movie genre -endpoint ------------------
 app.post('/genres', (req, res) => {
   const { genre }  = req.body;
   // console.log(genre);
@@ -20,55 +20,76 @@ app.post('/genres', (req, res) => {
   const dummyResponse = {
     id: "2",
     genre: genre
-  }
+  };
   // res.send('Genre added successfully');
   res.status(201).send(dummyResponse);
 });
 
-// add new movie -endpoint
+
+// add new movie -endpoint -------------------
 app.post('/movies', (req, res) => {
-  res.send('Movie added succesfully');
+  const { name, year, genre } = req.body;
+  //genre_id haetaan genres taulusta
+
+  const dummyResponse = {
+    id: "3",
+    name: name,
+    year: year,
+    genre_id : "2"
+  };
+
+  // res.send('Movie added succesfully');
+  res.status(201).send(dummyResponse);
 });
 
-// add registering user (accounts) -endpoint
+
+// add registering user (accounts) -endpoint ----------------
 app.post('/register', (req, res) => {
   res.send('User registered successfully');
 });
 
-// get movie by keyword -endpoint
+
+// get movie by keyword -endpoint ---------------
 app.get('/movies/search', (req, res) => {
   res.send('Movie search completed successfully');
 });
 
-// get movie by id -endpoint
+
+// get movie by id -endpoint --------------
 app.get('/movies/:id', (req, res) => {
   res.send('Movie retrieved successfully by ID');
 });
 
-// remove movie by id -endpoint
+
+// remove movie by id -endpoint ---------------
 app.delete('/movies/:id', (req, res) => {
   res.send('The movie has been deleted');
 });
 
-// get all movies -endpoint
+
+// get all movies -endpoint ------------------
 app.get('/movies', (req, res) => {
   res.send('All movies retrieved succesfully');
 });
 
-// add movie review -endpoint
+
+// add movie review -endpoint ---------------
 app.post('/reviews', (req, res) => {
   res.send('Movie review added');
 });
 
-// add favorite movies for user -endpoint
+
+// add favorite movies for user -endpoint -----------------
 app.post('/favorites', (req, res) => {
   res.send('Favorite movie added for user');
 });
 
-// get favorite movies by username
+
+// get favorite movies by username ----------------------
 app.get('/favorites/:username', (req, res) => {
   res.send('Favorite movies retrieved by username');
 });
+
 
 // Start the server and listen on the specified port
 app.listen(port, () => {
