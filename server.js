@@ -13,7 +13,16 @@ app.get('/', (req, res) => {
 
 // add movie genre -endpoint
 app.post('/genres', (req, res) => {
-  res.send('Genre added successfully');
+  const { genre }  = req.body;
+  // console.log(genre);
+
+  // tarkistetaan onko genreä annettu if...
+  const dummyResponse = {
+    id: "2",
+    genre: genre
+  }
+  // res.send('Genre added successfully');
+  res.status(201).send(dummyResponse);
 });
 
 // add new movie -endpoint
