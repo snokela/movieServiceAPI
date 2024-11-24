@@ -105,14 +105,13 @@ app.post('/reviews', (req, res) => {
 
 // add favorite movies for user -endpoint -----------------
 app.post('/favorites', (req, res) => {
-  const { username, movie_name } = req.body;
+  const { username, movie_id } = req.body;
 
   const dummyAccountId = 3;
-  const dummyMovieId = 2;
 
   const dummyResponse = {
     account_id: dummyAccountId,
-    movie_id: dummyMovieId,
+    movie_id: movie_id,
     message: "Favorite movies added succesfully"
   };
   // res.send('Favorite movie added for user');
