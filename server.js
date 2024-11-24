@@ -74,7 +74,15 @@ app.get('/movies/:id', (req, res) => {
 
 // remove movie by id -endpoint ---------------
 app.delete('/movies/:id', (req, res) => {
-  res.send('The movie has been deleted');
+  const { id } = req.params;
+
+  const dummyResponse = {
+    movie_id: id,
+    message: "The movie has been deleted succesfully"
+  };
+
+  res.status(200).json(dummyResponse);
+  // res.send('The movie has been deleted');
 });
 
 
