@@ -86,14 +86,13 @@ app.get('/movies', (req, res) => {
 
 // add movie review -endpoint ---------------
 app.post('/reviews', (req, res) => {
-  const { username, star, review, movie_name } = req.body;
+  const { username, star, review, movie_id } = req.body;
   // Retrieving from the database
   const dummyAccountId = 2;
-  const dummyMovieId = 3;
 
   const dummyResponse = {
     account_id: dummyAccountId,
-    movie_id: dummyMovieId,
+    movie_id: movie_id,
     star: star,
     review: review,
     message: "Movie review added successfully"
