@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 app.post('/genres', (req, res) => {
   const { genre }  = req.body;
   // console.log(genre);
-  // tarkistetaan onko genreä annettu if...
+  // validation
   const dummyResponse = {
     id: "2",
     genre: genre
@@ -28,12 +28,15 @@ app.post('/genres', (req, res) => {
 // add new movie -endpoint -------------------
 app.post('/movies', (req, res) => {
   const { name, year, genre } = req.body;
-  //genre_id haetaan genres taulusta
+
+  // Retrieving from the database
+  const dummyGenreId = 4;
+
   const dummyResponse = {
-    id: "3",
+    id: 3,
     name: name,
     year: year,
-    genre_id : "2"
+    genre_id : dummyGenreId
   };
   // res.send('Movie added succesfully');
   res.status(201).send(dummyResponse);
@@ -80,7 +83,21 @@ app.get('/movies', (req, res) => {
 
 // add movie review -endpoint ---------------
 app.post('/reviews', (req, res) => {
-  res.send('Movie review added');
+  const { username, star, review, movie_name } = req.body;
+  // Retrieving from the database
+  const dummyAccountId = 2;
+  const dummyMovieId = 3;
+
+  const dummyResponse = {
+    account_id: dummyAccountId,
+    movie_id: dummyMovieId,
+    star: star,
+    review: review,
+    message: "Movie review added successfully"
+  };
+
+  // res.send('Movie review added');
+  res.status(201).send(dummyResponse);
 });
 
 
