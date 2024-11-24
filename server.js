@@ -18,7 +18,8 @@ app.post('/genres', (req, res) => {
   // validation
   const dummyResponse = {
     id: "2",
-    genre: genre
+    genre: genre,
+    message: "Genre added succesfully"
   };
   // res.send('Genre added successfully');
   res.status(201).send(dummyResponse);
@@ -36,7 +37,8 @@ app.post('/movies', (req, res) => {
     id: 3,
     name: name,
     year: year,
-    genre_id : dummyGenreId
+    genre_id : dummyGenreId,
+    message: "Movie added succesfully"
   };
   // res.send('Movie added succesfully');
   res.status(201).send(dummyResponse);
@@ -50,7 +52,8 @@ app.post('/register', (req, res) => {
   const dummyResponse = {
     name: name,
     username: username,
-    birth_year: birth_year
+    birth_year: birth_year,
+    message: "User added succesfully"
   };
   // res.send('User registered successfully');
   res.status(201).send(dummyResponse);
@@ -103,7 +106,18 @@ app.post('/reviews', (req, res) => {
 
 // add favorite movies for user -endpoint -----------------
 app.post('/favorites', (req, res) => {
-  res.send('Favorite movie added for user');
+  const { username, movie_name } = req.body;
+
+  const dummyAccountId = 3;
+  const dummyMovieId = 2;
+
+  const dummyResponse = {
+    account_id: dummyAccountId,
+    movie_id: dummyMovieId,
+    message: "Favorite movies added succesfully"
+  };
+  // res.send('Favorite movie added for user');
+  res.status(201).send(dummyResponse);
 });
 
 
