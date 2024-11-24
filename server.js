@@ -22,7 +22,7 @@ app.post('/genres', (req, res) => {
     message: "Genre added succesfully"
   };
   // res.send('Genre added successfully');
-  res.status(201).send(dummyResponse);
+  res.status(201).json(dummyResponse);
 });
 
 
@@ -41,7 +41,7 @@ app.post('/movies', (req, res) => {
     message: "Movie added succesfully"
   };
   // res.send('Movie added succesfully');
-  res.status(201).send(dummyResponse);
+  res.status(201).json(dummyResponse);
 });
 
 
@@ -56,7 +56,7 @@ app.post('/register', (req, res) => {
     message: "User added succesfully"
   };
   // res.send('User registered successfully');
-  res.status(201).send(dummyResponse);
+  res.status(201).json(dummyResponse);
 });
 
 
@@ -68,7 +68,15 @@ app.get('/movies/search', (req, res) => {
 
 // get movie by id -endpoint --------------
 app.get('/movies/:id', (req, res) => {
-  res.send('Movie retrieved successfully by ID');
+  const { id } = req.params;
+
+  const dummyResponse = {
+    movie_id: id,
+    message: "The movie has been retrieved succesfully"
+  };
+
+  res.status(200).json(dummyResponse);
+  // res.send('Movie retrieved successfully by ID');
 });
 
 
@@ -107,7 +115,7 @@ app.post('/reviews', (req, res) => {
   };
 
   // res.send('Movie review added');
-  res.status(201).send(dummyResponse);
+  res.status(201).json(dummyResponse);
 });
 
 
@@ -123,7 +131,7 @@ app.post('/favorites', (req, res) => {
     message: "Favorite movies added succesfully"
   };
   // res.send('Favorite movie added for user');
-  res.status(201).send(dummyResponse);
+  res.status(201).json(dummyResponse);
 });
 
 
