@@ -15,7 +15,6 @@ app.get('/', (req, res) => {
 app.post('/genres', (req, res) => {
   const { genre }  = req.body;
   // console.log(genre);
-
   // tarkistetaan onko genreä annettu if...
   const dummyResponse = {
     id: "2",
@@ -30,14 +29,12 @@ app.post('/genres', (req, res) => {
 app.post('/movies', (req, res) => {
   const { name, year, genre } = req.body;
   //genre_id haetaan genres taulusta
-
   const dummyResponse = {
     id: "3",
     name: name,
     year: year,
     genre_id : "2"
   };
-
   // res.send('Movie added succesfully');
   res.status(201).send(dummyResponse);
 });
@@ -45,7 +42,15 @@ app.post('/movies', (req, res) => {
 
 // add registering user (accounts) -endpoint ----------------
 app.post('/register', (req, res) => {
-  res.send('User registered successfully');
+  const { name, username, password, birth_year } = req.body;
+
+  const dummyResponse = {
+    name: name,
+    username: username,
+    birth_year: birth_year
+  };
+  // res.send('User registered successfully');
+  res.status(201).send(dummyResponse);
 });
 
 
