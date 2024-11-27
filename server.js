@@ -86,13 +86,12 @@ app.get('/movies/:id', (req, res) => {
 app.delete('/movies/:id', (req, res) => {
   const { id } = req.params;
 
-  const dummyResponse = {
-    movie_id: id,
-    message: "The movie has been deleted succesfully"
+  const response = {
+    message: "The movie has been deleted succesfully",
+    movie_id: id
   };
 
-  res.status(200).json(dummyResponse);
-  // res.send('The movie has been deleted');
+  res.status(200).json(response);
 });
 
 
