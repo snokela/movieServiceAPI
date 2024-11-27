@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 
 // add movie genre -endpoint ------------------
 app.post('/genres', (req, res) => {
-  const { genre }  = req.body;
+  const { genre } = req.body;
   // console.log(genre);
   // validation
   const dummyResponse = {
@@ -37,7 +37,7 @@ app.post('/movies', (req, res) => {
     id: 3,
     name: name,
     year: year,
-    genre_id : dummyGenreId,
+    genre_id: dummyGenreId,
     message: "Movie added succesfully"
   };
   // res.send('Movie added succesfully');
@@ -70,13 +70,15 @@ app.post('/register', (req, res) => {
 app.get('/movies/:id', (req, res) => {
   const { id } = req.params;
 
-  const dummyResponse = {
-    movie_id: id,
-    message: "The movie has been retrieved succesfully"
+  const response = {
+    id: 1,
+    name: 'The Matrix',
+    year: 1999,
+    genre: 'scifi',
+    genre_id: 5
   };
 
-  res.status(200).json(dummyResponse);
-  // res.send('Movie retrieved successfully by ID');
+  res.status(200).json(response);
 });
 
 
@@ -99,16 +101,6 @@ app.delete('/movies/:id', (req, res) => {
 app.get('/movies', (req, res) => {
   const keyword = req.query.keyword || '';
 
-  // dummyresponse for the all movies
-  const  allMoviesResponse = [
-    { id: 1, name: 'The Matrix', year: 1999, genre: 'scifi', genre_id: 5},
-    { id: 2, name: 'Inception', year: 2010, genre: 'action', genre_id: 1 },
-    { id: 3, name: 'Hereditary', year: 2018, genre: 'horror',  genre_id: 3 },
-    { id: 4, name: 'The Godfather', year: 1972, genre: 'drama', genre_id: 2 },
-    { id: 5, name: 'Tropic Thunder', year: 2008, genre: 'comedy', genre_id: 4 },
-    { id: 6, name: 'The Godfather 2030', year: 2030, genre: 'drama', genre_id: 2 }
-  ];
-
   if (keyword) {
     //  TODO: Replace this logic with a database query to fetch movies by keyword
 
@@ -120,6 +112,15 @@ app.get('/movies', (req, res) => {
 
     res.status(200).json(response);
   } else {
+    // dummyresponse for the all movies
+    const allMoviesResponse = [
+      { id: 1, name: 'The Matrix', year: 1999, genre: 'scifi', genre_id: 5 },
+      { id: 2, name: 'Inception', year: 2010, genre: 'action', genre_id: 1 },
+      { id: 3, name: 'Hereditary', year: 2018, genre: 'horror', genre_id: 3 },
+      { id: 4, name: 'The Godfather', year: 1972, genre: 'drama', genre_id: 2 },
+      { id: 5, name: 'Tropic Thunder', year: 2008, genre: 'comedy', genre_id: 4 },
+      { id: 6, name: 'The Godfather 2030', year: 2030, genre: 'drama', genre_id: 2 }
+    ];
     res.status(200).json(allMoviesResponse);
   }
 });
@@ -131,7 +132,7 @@ app.post('/reviews', (req, res) => {
   // Retrieving from the database
   const dummyAccountId = 2;
 
-  const dummyResponse = {
+  const response = {
     account_id: dummyAccountId,
     movie_id: movie_id,
     star: star,
@@ -140,7 +141,7 @@ app.post('/reviews', (req, res) => {
   };
 
   // res.send('Movie review added');
-  res.status(201).json(dummyResponse);
+  res.status(201).json(response);
 });
 
 
@@ -167,8 +168,8 @@ app.get('/favorites/:username', (req, res) => {
 
   // dummyfavorites
   const favorites = [
-    { movie_id: 1,  movie: 'Inception', genre: 'action'},
-    { movie_id: 4, movie: 'Hereditary', genre: 'horror'}
+    { movie_id: 1, movie: 'Inception', genre: 'action' },
+    { movie_id: 4, movie: 'Hereditary', genre: 'horror' }
   ];
 
   // dummyresponse
