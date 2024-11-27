@@ -60,10 +60,10 @@ app.post('/register', (req, res) => {
 });
 
 
-// get movie by keyword -endpoint ---------------
-app.get('/movies/search', (req, res) => {
-  res.send('Movie search completed successfully');
-});
+// // get movie by keyword -endpoint ---------------
+// app.get('/movies/search', (req, res) => {
+//   res.send('Movie search completed successfully');
+// });
 
 
 // get movie by id -endpoint --------------
@@ -94,9 +94,33 @@ app.delete('/movies/:id', (req, res) => {
 });
 
 
-// get all movies -endpoint ------------------
+// get all movies -endpoint and get movies by keyword -endpoint ------------------
 app.get('/movies', (req, res) => {
-  res.send('All movies retrieved succesfully');
+  const keyword = req.query.keyword || '';
+
+  // dummyresponse for the all movies
+  const  allMoviesResponse = [
+    { id: 1, name: 'The Matrix', year: 1999, genre: 'scifi', genre_id: 5},
+    { id: 2, name: 'Inception', year: 2010, genre: 'action', genre_id: 1 },
+    { id: 3, name: 'Hereditary', year: 2018, genre: 'horror',  genre_id: 3 },
+    { id: 4, name: 'The Godfather', year: 1972, genre: 'drama', genre_id: 2 },
+    { id: 5, name: 'Tropic Thunder', year: 2008, genre: 'comedy', genre_id: 4 },
+    { id: 6, name: 'The Godfather 2030', year: 2030, genre: 'drama', genre_id: 2 }
+  ];
+
+  if (keyword) {
+    //  TODO: Replace this logic with a database query to fetch movies by keyword
+
+    // dummyresponse for the keyword
+    const response = [
+      { id: 4, name: 'The Godfather', year: 1972, genre: 'drama', genre_id: 2 },
+      { id: 6, name: 'The Godfather 2030', year: 2030, genre: 'drama', genre_id: 2 }
+    ];
+
+    res.status(200).json(response);
+  } else {
+    res.status(200).json(allMoviesResponse);
+  }
 });
 
 
