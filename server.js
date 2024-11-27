@@ -95,6 +95,7 @@ app.delete('/movies/:id', (req, res) => {
 
 
 // get all movies -endpoint and get movies by keyword -endpoint ------------------
+// Pagination will be added later
 app.get('/movies', (req, res) => {
   const keyword = req.query.keyword || '';
 
@@ -149,19 +150,34 @@ app.post('/favorites', (req, res) => {
 
   const dummyAccountId = 3;
 
-  const dummyResponse = {
+  // dummyresponse
+  const response = {
     account_id: dummyAccountId,
     movie_id: movie_id,
     message: "Favorite movies added succesfully"
   };
   // res.send('Favorite movie added for user');
-  res.status(201).json(dummyResponse);
+  res.status(201).json(response);
 });
 
 
 // get favorite movies by username ----------------------
 app.get('/favorites/:username', (req, res) => {
-  res.send('Favorite movies retrieved by username');
+  const uname = req.params.username;
+
+  // dummyfavorites
+  const favorites = [
+    { movie_id: 1,  movie: 'Inception', genre: 'action'},
+    { movie_id: 4, movie: 'Hereditary', genre: 'horror'}
+  ];
+
+  // dummyresponse
+  const response = {
+    username: uname,
+    favorites: favorites
+  };
+
+  res.status(200).json(response);
 });
 
 
