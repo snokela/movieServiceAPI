@@ -20,6 +20,7 @@ app.post('/genres', (req, res) => {
     id: "2",
     genre: genre,
   };
+
   res.status(201).json(response);
 });
 
@@ -51,9 +52,8 @@ app.post('/register', (req, res) => {
     name: name,
     username: username,
     birth_year: birth_year,
-    message: "User added succesfully"
   };
-  // res.send('User registered successfully');
+
   res.status(201).json(response);
 });
 
@@ -104,20 +104,20 @@ app.get('/movies', (req, res) => {
 
     // dummyresponse for the keyword
     const response = [
-      { id: 4, name: 'The Godfather', year: 1972, genre: 'drama', genre_id: 2 },
-      { id: 6, name: 'The Godfather 2030', year: 2030, genre: 'drama', genre_id: 2 }
+      { id: 4, name: 'The Godfather', year: 1972, genre_id: 2 },
+      { id: 6, name: 'The Godfather 2030', year: 2030, genre_id: 2 }
     ];
 
     res.status(200).json(response);
   } else {
     // dummyresponse for the all movies
     const allMoviesResponse = [
-      { id: 1, name: 'The Matrix', year: 1999, genre: 'scifi', genre_id: 5 },
-      { id: 2, name: 'Inception', year: 2010, genre: 'action', genre_id: 1 },
-      { id: 3, name: 'Hereditary', year: 2018, genre: 'horror', genre_id: 3 },
-      { id: 4, name: 'The Godfather', year: 1972, genre: 'drama', genre_id: 2 },
-      { id: 5, name: 'Tropic Thunder', year: 2008, genre: 'comedy', genre_id: 4 },
-      { id: 6, name: 'The Godfather 2030', year: 2030, genre: 'drama', genre_id: 2 }
+      { id: 1, name: 'The Matrix', year: 1999, genre_id: 5 },
+      { id: 2, name: 'Inception', year: 2010, genre_id: 1 },
+      { id: 3, name: 'Hereditary', year: 2018, genre_id: 3 },
+      { id: 4, name: 'The Godfather', year: 1972, genre_id: 2 },
+      { id: 5, name: 'Tropic Thunder', year: 2008, genre_id: 4 },
+      { id: 6, name: 'The Godfather 2030', year: 2030, genre_id: 2 }
     ];
     res.status(200).json(allMoviesResponse);
   }
@@ -135,10 +135,8 @@ app.post('/reviews', (req, res) => {
     movie_id: movie_id,
     star: star,
     review: review,
-    message: "Movie review added successfully"
   };
 
-  // res.send('Movie review added');
   res.status(201).json(response);
 });
 
@@ -153,9 +151,7 @@ app.post('/favorites', (req, res) => {
   const response = {
     account_id: dummyAccountId,
     movie_id: movie_id,
-    message: "Favorite movies added succesfully"
   };
-  // res.send('Favorite movie added for user');
   res.status(201).json(response);
 });
 
