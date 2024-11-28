@@ -156,23 +156,32 @@ app.post('/favorites', (req, res) => {
 });
 
 
-// get favorite movies by username ----------------------
-app.get('/favorites/:username', (req, res) => {
-  const uname = req.params.username;
+// get favorite movies by username----------------------
+app.get('/favorites', (req, res) => {
 
-  // dummyfavorites
-  const favorites = [
-    { movie_id: 1, movie: 'Inception', genre: 'action' },
-    { movie_id: 4, movie: 'Hereditary', genre: 'horror' }
+  // dummyfavorites by username
+  const favorites1 = [
+    { movie_id: 1, movie: 'Inception', genre_id: 1 },
+    { movie_id: 4, movie: 'Hereditary', genre_id: 3 }
   ];
 
-  // dummyresponse
-  const response = {
-    username: uname,
-    favorites: favorites
-  };
+  const favorites2 = [
+    { movie_id: 3, movie: 'Inception', genre_id: 1 },
+    { movie_id: 5, movie: 'Joker', genre_id: 2 }
+  ];
 
-  res.status(200).json(response);
+  const response = [
+    {
+      username: 'example1',
+      favorites: favorites1
+    },
+    {
+      username: 'example2',
+      favorites: favorites2
+    },
+  ]
+
+res.status(200).json(response);
 });
 
 
