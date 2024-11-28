@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Movie API');
 });
 
+
 // add movie genre -endpoint ------------------
 app.post('/genres', (req, res) => {
   const { genre } = req.body;
@@ -56,12 +57,6 @@ app.post('/register', (req, res) => {
 
   res.status(201).json(response);
 });
-
-
-// // get movie by keyword -endpoint ---------------
-// app.get('/movies/search', (req, res) => {
-//   res.send('Movie search completed successfully');
-// });
 
 
 // get movie by id -endpoint --------------
@@ -159,7 +154,7 @@ app.post('/favorites', (req, res) => {
 // get favorite movies by username----------------------
 app.get('/favorites', (req, res) => {
 
-  // dummyfavorites by username
+  // dummyfavorites
   const favorites1 = [
     { movie_id: 1, movie: 'Inception', genre_id: 1 },
     { movie_id: 4, movie: 'Hereditary', genre_id: 3 }
