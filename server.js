@@ -16,13 +16,11 @@ app.post('/genres', (req, res) => {
   const { genre } = req.body;
   // console.log(genre);
   // validation
-  const dummyResponse = {
+  const response = {
     id: "2",
     genre: genre,
-    message: "Genre added succesfully"
   };
-  // res.send('Genre added successfully');
-  res.status(201).json(dummyResponse);
+  res.status(201).json(response);
 });
 
 
@@ -30,18 +28,17 @@ app.post('/genres', (req, res) => {
 app.post('/movies', (req, res) => {
   const { name, year, genre } = req.body;
 
-  // Retrieving from the database
+  // Retrieving genreID from the database
   const dummyGenreId = 4;
 
-  const dummyResponse = {
+  const response = {
     id: 3,
     name: name,
     year: year,
     genre_id: dummyGenreId,
-    message: "Movie added succesfully"
   };
-  // res.send('Movie added succesfully');
-  res.status(201).json(dummyResponse);
+
+  res.status(201).json(response);
 });
 
 
@@ -49,14 +46,15 @@ app.post('/movies', (req, res) => {
 app.post('/register', (req, res) => {
   const { name, username, password, birth_year } = req.body;
 
-  const dummyResponse = {
+  // dummyresponse
+  const response = {
     name: name,
     username: username,
     birth_year: birth_year,
     message: "User added succesfully"
   };
   // res.send('User registered successfully');
-  res.status(201).json(dummyResponse);
+  res.status(201).json(response);
 });
 
 
@@ -70,6 +68,7 @@ app.post('/register', (req, res) => {
 app.get('/movies/:id', (req, res) => {
   const { id } = req.params;
 
+  // dummyresponse
   const response = {
     id: 1,
     name: 'The Matrix',
