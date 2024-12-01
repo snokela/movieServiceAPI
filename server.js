@@ -96,6 +96,10 @@ app.get('/movies/:id', (req, res) => {
 app.delete('/movies/:id', (req, res) => {
   const { id } = req.params;
 
+  if (!id || isNaN(Number(id))) {
+    return res.status(400).json({ message: 'Movie ID must be a valid number'});
+  }
+
   const response = {
     message: "The movie has been deleted succesfully",
     movie_id: id
