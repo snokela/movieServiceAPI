@@ -56,6 +56,10 @@ app.post('/movies', (req, res) => {
 app.post('/register', (req, res) => {
   const { name, username, password, birth_year } = req.body;
 
+  if (!name || !username || !password || !birth_year) {
+    return res.status(400).json({ message: 'Name, username, password and birth_year are required' });
+  }
+
   // dummyresponse
   const response = {
     name: name,
