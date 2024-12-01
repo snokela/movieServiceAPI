@@ -34,6 +34,10 @@ app.post('/genres', (req, res) => {
 app.post('/movies', (req, res) => {
   const { name, year, genre } = req.body;
 
+  if (!name || !year || !genre) {
+    return res.status(400).json({ message: 'Name, year and genre are required' });
+  }
+
   // Retrieving genreID from the database
   const dummyGenreId = 4;
 
