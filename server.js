@@ -17,6 +17,10 @@ app.post('/genres', (req, res) => {
   const { genre } = req.body;
   // console.log(genre);
   // validation
+  if (!genre || genre.trim() === '') {
+    return res.status(400).json({ message: 'Genre  is required' });
+  }
+
   const response = {
     id: "2",
     genre: genre,
