@@ -142,6 +142,15 @@ app.get('/movies', (req, res) => {
 // add movie review -endpoint ---------------
 app.post('/reviews', (req, res) => {
   const { username, star, review, movie_id } = req.body;
+
+  if (!username || !star || !review || !movie_id) {
+    return res.status(400).json({ message: 'Username, star, review and movie_id are required' });
+  }
+
+  if (isNaN(Number(star)) || star < 1  || star > 5) {
+    return res.status(400).json({ message: 'Star must be number between 1 and 5' });
+  }
+
   // Retrieving from the database
   const dummyAccountId = 2;
 
