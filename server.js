@@ -169,6 +169,10 @@ app.post('/reviews', (req, res) => {
 app.post('/favorites', (req, res) => {
   const { username, movie_id } = req.body;
 
+  if (!username || !movie_id) {
+    return res.status(400).json({ message: 'Username and movie_id are required' });
+  }
+
   const dummyAccountId = 3;
 
   // dummyresponse
