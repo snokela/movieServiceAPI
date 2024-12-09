@@ -29,10 +29,10 @@ app.post('/genres', async (req, res) => {
     );
 
     if (existingGenreResult.rows.length > 0) {
-      return res.status(409).json({ message: 'Genre already exists'})
+      return res.status(409).json({ message: 'Genre already exists' })
     }
 
-    // add genre to db and return the added row data
+    // add genre to db
     const result = await pgPool.query(
       `INSERT INTO genres (name) VALUES ($1) RETURNING id, name AS genre `,
       [genre.trim()]
@@ -93,23 +93,37 @@ app.post('/movies', async (req, res) => {
   }
 });
 
-
 // add registering user (accounts) -endpoint ----------------
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const { name, username, password, birth_year } = req.body;
 
   if (!name || !username || !password || !birth_year) {
     return res.status(400).json({ message: 'Name, username, password and birth_year are required' });
   }
 
-  // dummyresponse
-  const response = {
-    name: name,
-    username: username,
-    birth_year: birth_year,
-  };
+  try {
+    // check if user already exists in the db
+    const existingUserResult = await pgPool.query(
+      `SELECT id FROM accounts WHERE username = $1`,
+      [username.trim()]
+    );
 
-  res.status(201).json(response);
+    if (existingUserResult.rows.length > 0) {
+      return res.status(409).json({ message: 'User already exists' });
+    }
+
+    //add user to db
+    const result = await pgPool.query(
+      `INSERT INTO accounts (name, username, password, birth_year) VALUES ($1, $2, $3, $4) RETURNING id, name, username, birth_year AS birthYear`,
+      [name.trim(),username.trim(), password, birth_year]
+    );
+
+    const response = result.rows[0];
+
+    res.status(201).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 
