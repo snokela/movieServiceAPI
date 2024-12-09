@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 
-// add movie genre -endpoint ------------------
+// add movie genre -endpoint
 app.post('/genres', async (req, res) => {
   const genre = req.body.genre;
   // validation
@@ -120,32 +120,38 @@ app.delete('/movies/:id', (req, res) => {
 });
 
 
-// get all movies -endpoint and get movies by keyword -endpoint ------------------
-// Pagination will be added later
-app.get('/movies', (req, res) => {
-  const keyword = req.query.keyword || '';
+// get all movies -endpoint and get movies by keyword -endpoint
+app.get('/movies', async (req, res) => {
+  let keyword = req.query.keyword || '';
 
-  if (keyword) {
-    //  TODO: Replace this logic with a database query to fetch movies by keyword
+  // TODO: Implement pagination for movie results
 
-    // dummyresponse for the keyword
-    const response = [
-      { id: 4, name: 'The Godfather', year: 1972, genre_id: 2 },
-      { id: 6, name: 'The Godfather 2030', year: 2030, genre_id: 2 }
-    ];
+  try {
 
-    res.status(200).json(response);
-  } else {
-    // dummyresponse for the all movies
-    const allMoviesResponse = [
-      { id: 1, name: 'The Matrix', year: 1999, genre_id: 5 },
-      { id: 2, name: 'Inception', year: 2010, genre_id: 1 },
-      { id: 3, name: 'Hereditary', year: 2018, genre_id: 3 },
-      { id: 4, name: 'The Godfather', year: 1972, genre_id: 2 },
-      { id: 5, name: 'Tropic Thunder', year: 2008, genre_id: 4 },
-      { id: 6, name: 'The Godfather 2030', year: 2030, genre_id: 2 }
-    ];
-    res.status(200).json(allMoviesResponse);
+    let result;
+
+    keyword = keyword.trim();
+    if (!keyword) {
+      result = await pgPool.query(`SELECT id, name, year, genre_id AS genreID FROM movies`);
+    }else {
+      keyword = '%' + keyword.toLowerCase() + '%';
+      result = await pgPool.query(
+        `SELECT id, name, year, genre_id AS genreID FROM movies WHERE LOWER(name) LIKE $1`,
+        [keyword]
+      );
+    }
+
+    const response = result.rows;
+
+    // Check if any movies were found
+    if (response.length === 0) {
+      return res.status(404).json({ message: 'No movies found'})
+    }
+
+    // return movies
+    res.json(response)
+  } catch (error) {
+    res.status(500).json({ error: error.message})
   }
 });
 
