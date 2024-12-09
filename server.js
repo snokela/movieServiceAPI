@@ -22,6 +22,16 @@ app.post('/genres', async (req, res) => {
   }
 
   try {
+    // check if genre already exists in the db
+    const existingGenreResult = await pgPool.query(
+      `SELECT id FROM genres WHERE name = $1`,
+      [genre.trim()]
+    );
+
+    if (existingGenreResult.rows.length > 0) {
+      return res.status(409).json({ message: 'Genre already exists'})
+    }
+
     // add genre to db and return the added row data
     const result = await pgPool.query(
       `INSERT INTO genres (name) VALUES ($1) RETURNING id, name `,
@@ -41,7 +51,7 @@ app.post('/genres', async (req, res) => {
 });
 
 
-// add new movie -endpoint -------------------
+// add new movie -endpoint
 app.post('/movies', async (req, res) => {
   const { name, year, genre } = req.body;
 
@@ -69,7 +79,7 @@ app.post('/movies', async (req, res) => {
     );
 
     if (existingMovieResult.rows.length > 0) {
-      return res.status(409).json({ message : 'Movie already exists'});
+      return res.status(409).json({ message: 'Movie already exists' });
     }
 
     // add movie to db
