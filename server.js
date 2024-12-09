@@ -93,7 +93,7 @@ app.post('/movies', async (req, res) => {
   }
 });
 
-// add registering user (accounts) -endpoint ----------------
+// add registering user (accounts) -endpoint
 app.post('/register', async (req, res) => {
   const { name, username, password, birth_year } = req.body;
 
@@ -115,7 +115,7 @@ app.post('/register', async (req, res) => {
     //add user to db
     const result = await pgPool.query(
       `INSERT INTO accounts (name, username, password, birth_year) VALUES ($1, $2, $3, $4) RETURNING id, name, username, birth_year AS birthYear`,
-      [name.trim(),username.trim(), password, birth_year]
+      [name.trim(), username.trim(), password, birth_year]
     );
 
     const response = result.rows[0];
@@ -157,19 +157,33 @@ app.get('/movies/:id', async (req, res) => {
 });
 
 // remove movie by id -endpoint ---------------
-app.delete('/movies/:id', (req, res) => {
+app.delete('/movies/:id', async (req, res) => {
   const { id } = req.params;
 
   if (!id || isNaN(Number(id))) {
     return res.status(400).json({ message: 'Movie ID must be a valid number' });
   }
 
-  const response = {
-    message: "The movie has been deleted succesfully",
-    movie_id: id
-  };
+  try {
+    const result = await pgPool.query(
+      `DELETE FROM movies WHERE id= $1 RETURNING id`,
+      [id]
+    );
 
-  res.status(200).json(response);
+    // check if the movie exists in the db
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Movie does not exists' });
+    }
+
+    const response = {
+      message: "The movie has been deleted succesfully",
+      movieid: result.rows[0].id
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 });
 
 
