@@ -66,7 +66,7 @@ app.post('/movies', async (req, res) => {
       return res.status(404).json({ message: 'Genre not found' });
     }
 
-    const genreID = genreIdResult.rows[0].id;
+    const genreId = genreIdResult.rows[0].id;
 
     // check if the movie already exists in the db
     const existingMovieResult = await pgPool.query(
@@ -81,7 +81,7 @@ app.post('/movies', async (req, res) => {
     // add movie to db
     const result = await pgPool.query(
       `INSERT INTO movies (name, year, genre_id) VALUES ($1, $2, $3) RETURNING id, name, year, genre_id AS genreID`,
-      [name.trim(), year, genreID]
+      [name.trim(), year, genreId]
     );
 
     const response = result.rows[0];
@@ -95,9 +95,9 @@ app.post('/movies', async (req, res) => {
 
 // add registering user (accounts) -endpoint
 app.post('/register', async (req, res) => {
-  const { name, username, password, birth_year } = req.body;
+  const { name, username, password, birthYear } = req.body;
 
-  if (!name || !username || !password || !birth_year) {
+  if (!name || !username || !password || !birthYear) {
     return res.status(400).json({ message: 'Name, username, password and birth_year are required' });
   }
 
@@ -115,7 +115,7 @@ app.post('/register', async (req, res) => {
     //add user to db
     const result = await pgPool.query(
       `INSERT INTO accounts (name, username, password, birth_year) VALUES ($1, $2, $3, $4) RETURNING id, name, username, birth_year AS birthYear`,
-      [name.trim(), username.trim(), password, birth_year]
+      [name.trim(), username.trim(), password, birthYear]
     );
 
     const response = result.rows[0];
@@ -156,7 +156,7 @@ app.get('/movies/:id', async (req, res) => {
   }
 });
 
-// remove movie by id -endpoint ---------------
+// remove movie by id -endpoint
 app.delete('/movies/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -224,10 +224,11 @@ app.get('/movies', async (req, res) => {
 
 
 // add movie review -endpoint ---------------
-app.post('/reviews', (req, res) => {
-  const { username, star, review, movie_id } = req.body;
+app.post('/reviews', async (req, res) => {
+  const { username, star, review, movieId } = req.body;
 
-  if (!username || !star || !review || !movie_id) {
+  // validation
+  if (!username || !star || !review || !movieId) {
     return res.status(400).json({ message: 'Username, star, review and movie_id are required' });
   }
 
@@ -235,17 +236,41 @@ app.post('/reviews', (req, res) => {
     return res.status(400).json({ message: 'Star must be number between 1 and 5' });
   }
 
-  // Retrieving from the database
-  const dummyAccountId = 2;
+  try {
+    // check if the user exists
+    const accountIdResult = await pgPool.query(
+      `SELECT id FROM accounts WHERE username=$1`,
+      [username.trim()]
+    );
 
-  const response = {
-    account_id: dummyAccountId,
-    movie_id: movie_id,
-    star: star,
-    review: review,
-  };
+    if (accountIdResult.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-  res.status(201).json(response);
+    const accountId = accountIdResult.rows[0].id;
+
+    // checking if the movie exist
+    const movieIdResult = await pgPool.query(
+      `SELECT id FROM movies WHERE id=$1`,
+      [movieId]
+    );
+
+    if (movieIdResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+
+    // add review to db
+    const result = await pgPool.query(
+      `INSERT INTO reviews (account_id, movie_id, star, review) VALUES ($1, $2, $3, $4) RETURNING account_id, movie_id, star, review`,
+      [accountId, movieId, star, review.trim()]
+    );
+
+    const response = result.rows[0];
+
+    res.status(201).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 });
 
 
