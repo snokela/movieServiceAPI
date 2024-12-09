@@ -42,24 +42,49 @@ app.post('/genres', async (req, res) => {
 
 
 // add new movie -endpoint -------------------
-app.post('/movies', (req, res) => {
+app.post('/movies', async (req, res) => {
   const { name, year, genre } = req.body;
 
   if (!name || !year || !genre) {
     return res.status(400).json({ message: 'Name, year and genre are required' });
   }
 
-  // Retrieving genreID from the database
-  const dummyGenreId = 4;
+  try {
+    // check if genre exists in the db
+    const genreIdResult = await pgPool.query(
+      `SELECT id FROM genres WHERE name=$1`,
+      [genre.trim()]
+    );
 
-  const response = {
-    id: 3,
-    name: name,
-    year: year,
-    genre_id: dummyGenreId,
-  };
+    if (genreIdResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Genre not found' });
+    }
 
-  res.status(201).json(response);
+    const genreID = genreIdResult.rows[0].id;
+
+    // check if the movie already exists in the db
+    const existingMovieResult = await pgPool.query(
+      `SELECT id FROM movies WHERE name=$1 AND year=$2`,
+      [name.trim(), year]
+    );
+
+    if (existingMovieResult.rows.length > 0) {
+      return res.status(409).json({ message : 'Movie already exists'});
+    }
+
+    // add movie to db
+    const result = await pgPool.query(
+      `INSERT INTO movies (name, year, genre_id) VALUES ($1, $2, $3) RETURNING id, name, year, genre_id AS genreID`,
+      [name.trim(), year, genreID]
+    );
+
+    const response = result.rows[0];
+
+    res.status(201).json(response);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 
@@ -107,7 +132,6 @@ app.get('/movies/:id', async (req, res) => {
 
     res.json(response);
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ error: error.message })
   }
 });
