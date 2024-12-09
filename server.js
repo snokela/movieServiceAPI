@@ -250,12 +250,12 @@ app.post('/reviews', async (req, res) => {
     const accountId = accountIdResult.rows[0].id;
 
     // checking if the movie exist
-    const movieIdResult = await pgPool.query(
+    const movieExistsResult = await pgPool.query(
       `SELECT id FROM movies WHERE id=$1`,
       [movieId]
     );
 
-    if (movieIdResult.rows.length === 0) {
+    if (movieExistsResult.rows.length === 0) {
       return res.status(404).json({ message: 'Movie not found' });
     }
 
@@ -275,21 +275,48 @@ app.post('/reviews', async (req, res) => {
 
 
 // add favorite movies for user -endpoint -----------------
-app.post('/favorites', (req, res) => {
-  const { username, movie_id } = req.body;
+app.post('/favorites', async (req, res) => {
+  const { username, movieId } = req.body;
 
-  if (!username || !movie_id) {
+  if (!username || !movieId) {
     return res.status(400).json({ message: 'Username and movie_id are required' });
   }
 
-  const dummyAccountId = 3;
+  try {
+    // check if the user exists
+    const accountIdResult = await pgPool.query(
+      `SELECT id FROM accounts WHERE username=$1`,
+      [username.trim()]
+    );
 
-  // dummyresponse
-  const response = {
-    account_id: dummyAccountId,
-    movie_id: movie_id,
-  };
-  res.status(201).json(response);
+    if (accountIdResult.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const accountId = accountIdResult.rows[0].id;
+
+    // checking if the movie exist
+    const movieExistsResult = await pgPool.query(
+      `SELECT id FROM movies WHERE id=$1`,
+      [movieId]
+    );
+
+    if (movieExistsResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+
+    // add favorite to db
+    const result = await pgPool.query(
+      `INSERT INTO favorites (account_id, movie_id) VALUES ($1, $2) RETURNING account_id, movie_id`,
+      [accountId, movieId]
+    );
+
+    const response = result.rows[0];
+
+    res.status(201).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 });
 
 
