@@ -34,15 +34,11 @@ app.post('/genres', async (req, res) => {
 
     // add genre to db and return the added row data
     const result = await pgPool.query(
-      `INSERT INTO genres (name) VALUES ($1) RETURNING id, name `,
+      `INSERT INTO genres (name) VALUES ($1) RETURNING id, name AS genre `,
       [genre.trim()]
     );
 
-    // response object
-    const response = {
-      id: result.rows[0].id,
-      genre: result.rows[0].name,
-    };
+    const response = result.rows[0];
 
     res.status(201).json(response);
   } catch (error) {
