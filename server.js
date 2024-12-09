@@ -14,20 +14,30 @@ app.get('/', (req, res) => {
 
 
 // add movie genre -endpoint ------------------
-app.post('/genres', (req, res) => {
-  const { genre } = req.body;
-  // console.log(genre);
+app.post('/genres', async (req, res) => {
+  const genre = req.body.genre;
   // validation
   if (!genre || genre.trim() === '') {
     return res.status(400).json({ message: 'Genre  is required' });
   }
 
-  const response = {
-    id: "2",
-    genre: genre,
-  };
+  try {
+    // add genre to db and return the added row data
+    const result = await pgPool.query(
+      `INSERT INTO genres (name) VALUES ($1) RETURNING id, name `,
+      [genre.trim()]
+    );
 
-  res.status(201).json(response);
+    // response object
+    const response = {
+      id: result.rows[0].id,
+      genre: result.rows[0].name,
+    };
+
+    res.status(201).json(response);
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
 });
 
 
@@ -77,7 +87,7 @@ app.get('/movies/:id', (req, res) => {
   const { id } = req.params;
 
   if (!id || isNaN(Number(id))) {
-    return res.status(400).json({ message: 'Movie ID must be a valid number'});
+    return res.status(400).json({ message: 'Movie ID must be a valid number' });
   }
 
   // dummyresponse
@@ -98,7 +108,7 @@ app.delete('/movies/:id', (req, res) => {
   const { id } = req.params;
 
   if (!id || isNaN(Number(id))) {
-    return res.status(400).json({ message: 'Movie ID must be a valid number'});
+    return res.status(400).json({ message: 'Movie ID must be a valid number' });
   }
 
   const response = {
@@ -148,7 +158,7 @@ app.post('/reviews', (req, res) => {
     return res.status(400).json({ message: 'Username, star, review and movie_id are required' });
   }
 
-  if (isNaN(Number(star)) || star < 1  || star > 5) {
+  if (isNaN(Number(star)) || star < 1 || star > 5) {
     return res.status(400).json({ message: 'Star must be number between 1 and 5' });
   }
 
@@ -210,7 +220,7 @@ app.get('/favorites', (req, res) => {
     },
   ]
 
-res.status(200).json(response);
+  res.status(200).json(response);
 });
 
 
