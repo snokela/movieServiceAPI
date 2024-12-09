@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 // add movie genre -endpoint
 app.post('/genres', async (req, res) => {
-  const genre = req.body.genre;
+  const { genre } = req.body;
   // validation
   if (!genre || genre.trim() === '') {
     return res.status(400).json({ message: 'Genre  is required' });
@@ -36,7 +36,7 @@ app.post('/genres', async (req, res) => {
 
     res.status(201).json(response);
   } catch (error) {
-    res.status(500).json({error: error.message});
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -82,26 +82,35 @@ app.post('/register', (req, res) => {
 });
 
 
-// get movie by id -endpoint --------------
-app.get('/movies/:id', (req, res) => {
+// get movie by id -endpoint
+app.get('/movies/:id', async (req, res) => {
   const { id } = req.params;
 
   if (!id || isNaN(Number(id))) {
     return res.status(400).json({ message: 'Movie ID must be a valid number' });
+
+  } try {
+    const result = await pgPool.query(
+      `SELECT movies.id, movies.name, movies.year, movies.genre_id AS genreID, genres.name AS genre
+        FROM movies
+        INNER JOIN genres
+        ON movies.genre_id = genres.id
+        WHERE movies.id=$1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+
+    const response = result.rows[0];
+
+    res.json(response);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: error.message })
   }
-
-  // dummyresponse
-  const response = {
-    id: 1,
-    name: 'The Matrix',
-    year: 1999,
-    genre: 'scifi',
-    genre_id: 5
-  };
-
-  res.status(200).json(response);
 });
-
 
 // remove movie by id -endpoint ---------------
 app.delete('/movies/:id', (req, res) => {
@@ -133,7 +142,7 @@ app.get('/movies', async (req, res) => {
     keyword = keyword.trim();
     if (!keyword) {
       result = await pgPool.query(`SELECT id, name, year, genre_id AS genreID FROM movies`);
-    }else {
+    } else {
       keyword = '%' + keyword.toLowerCase() + '%';
       result = await pgPool.query(
         `SELECT id, name, year, genre_id AS genreID FROM movies WHERE LOWER(name) LIKE $1`,
@@ -145,13 +154,13 @@ app.get('/movies', async (req, res) => {
 
     // Check if any movies were found
     if (response.length === 0) {
-      return res.status(404).json({ message: 'No movies found'})
+      return res.status(404).json({ message: 'No movies found' })
     }
 
     // return movies
     res.json(response)
   } catch (error) {
-    res.status(500).json({ error: error.message})
+    res.status(500).json({ error: error.message })
   }
 });
 
