@@ -254,12 +254,12 @@ app.post('/reviews', async (req, res) => {
     if (error.message === 'Movie not found') {
       return res.status(404).json({ message: error.message });
     }
-   return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 
-// add favorite movies for user -endpoint -----------------
+// ADD FAVORITE MOVIES FOR USER -ENDPOINT
 app.post('/favorites', async (req, res) => {
   const { username, movieId } = req.body;
 
@@ -268,27 +268,9 @@ app.post('/favorites', async (req, res) => {
   }
 
   try {
-    // check if the user exists
-    const accountIdResult = await pgPool.query(
-      `SELECT id FROM accounts WHERE username=$1`,
-      [username.trim()]
-    );
-
-    if (accountIdResult.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const accountId = accountIdResult.rows[0].id;
-
-    // check if the movie exist
-    const movieExistsResult = await pgPool.query(
-      `SELECT id FROM movies WHERE id=$1`,
-      [movieId]
-    );
-
-    if (movieExistsResult.rows.length === 0) {
-      return res.status(404).json({ message: 'Movie not found' });
-    }
+    // check if the user and movie exists
+    const accountId = await getUserAccountId(pgPool, username);
+    await checkMovieExists(pgPool, movieId);
 
     // add favorite to db
     const result = await pgPool.query(
@@ -300,7 +282,14 @@ app.post('/favorites', async (req, res) => {
 
     res.status(201).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    console.log(error.message);
+    if (error.message === 'User not found') {
+      return res.status(404).json({ message: error.message });
+    }
+    if (error.message === 'Movie not found') {
+      return res.status(404).json({ message: error.message });
+    }
+    return res.status(500).json({ error: error.message });
   }
 });
 
@@ -314,16 +303,7 @@ app.get('/favorites/:username', async (req, res) => {
 
   try {
     // check if the user exists
-    const accountIdResult = await pgPool.query(
-      `SELECT id FROM accounts WHERE username=$1`,
-      [username.trim()]
-    );
-
-    if (accountIdResult.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const accountId = accountIdResult.rows[0].id;
+    const accountId = await getUserAccountId(pgPool, username);
 
     // get favorite movies
     const result = await pgPool.query(
@@ -348,7 +328,11 @@ app.get('/favorites/:username', async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    console.log(error.message);
+    if (error.message === 'User not found') {
+      return res.status(404).json({ message: error.message });
+    }
+    return res.status(500).json({ error: error.message })
   }
 });
 
