@@ -1,6 +1,6 @@
 import express from 'express';
 import { pgPool } from './db.js';
-import { getUserAccountId, checkMovieExist } from './utilis.js';
+import { getUserAccountId, checkMovieExists } from './utilis.js';
 
 var app = express();
 
@@ -197,8 +197,8 @@ app.get('/movies', async (req, res) => {
   try {
 
     let result;
-
     keyword = keyword.trim();
+
     if (!keyword) {
       result = await pgPool.query(`SELECT id, name, year, genre_id AS genreID FROM movies`);
     } else {
@@ -211,11 +211,6 @@ app.get('/movies', async (req, res) => {
 
     const response = result.rows;
 
-    // Check if any movies were found
-    if (response.length === 0) {
-      return res.status(404).json({ message: 'No movies found' })
-    }
-
     // return movies
     res.json(response)
   } catch (error) {
@@ -224,7 +219,7 @@ app.get('/movies', async (req, res) => {
 });
 
 
-// add movie review -endpoint ---------------
+// ADD MOVIE REVIEW -ENDPOINT
 app.post('/reviews', async (req, res) => {
   const { username, star, review, movieId } = req.body;
 
@@ -238,27 +233,9 @@ app.post('/reviews', async (req, res) => {
   }
 
   try {
-    // check if the user exists
-    const accountIdResult = await pgPool.query(
-      `SELECT id FROM accounts WHERE username=$1`,
-      [username.trim()]
-    );
-
-    if (accountIdResult.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const accountId = accountIdResult.rows[0].id;
-
-    // checking if the movie exist
-    const movieExistsResult = await pgPool.query(
-      `SELECT id FROM movies WHERE id=$1`,
-      [movieId]
-    );
-
-    if (movieExistsResult.rows.length === 0) {
-      return res.status(404).json({ message: 'Movie not found' });
-    }
+    // check if the user and movie exists
+    const accountId = await getUserAccountId(pgPool, username);
+    await checkMovieExists(pgPool, movieId);
 
     // add review to db
     const result = await pgPool.query(
@@ -270,7 +247,14 @@ app.post('/reviews', async (req, res) => {
 
     res.status(201).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    console.log(error.message);
+    if (error.message === 'User not found') {
+      return res.status(404).json({ message: error.message });
+    }
+    if (error.message === 'Movie not found') {
+      return res.status(404).json({ message: error.message });
+    }
+   return res.status(500).json({ error: error.message });
   }
 });
 
