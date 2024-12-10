@@ -295,7 +295,7 @@ app.post('/favorites', async (req, res) => {
 
     const accountId = accountIdResult.rows[0].id;
 
-    // checking if the movie exist
+    // check if the movie exist
     const movieExistsResult = await pgPool.query(
       `SELECT id FROM movies WHERE id=$1`,
       [movieId]
@@ -319,35 +319,53 @@ app.post('/favorites', async (req, res) => {
   }
 });
 
+// GET FAVORITE MOVIES BY USERNAME
+app.get('/favorites/:username', async (req, res) => {
+  const username = req.params.username;
 
-// get favorite movies by username----------------------
-app.get('/favorites', (req, res) => {
+  if (!username) {
+    return res.status(400).json({ message: 'Username is required' });
+  }
 
-  // dummyfavorites
-  const favorites1 = [
-    { movie_id: 1, movie: 'Inception', genre_id: 1 },
-    { movie_id: 4, movie: 'Hereditary', genre_id: 3 }
-  ];
+  try {
+    // check if the user exists
+    const accountIdResult = await pgPool.query(
+      `SELECT id FROM accounts WHERE username=$1`,
+      [username.trim()]
+    );
 
-  const favorites2 = [
-    { movie_id: 3, movie: 'Inception', genre_id: 1 },
-    { movie_id: 5, movie: 'Joker', genre_id: 2 }
-  ];
+    if (accountIdResult.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-  const response = [
-    {
-      username: 'example1',
-      favorites: favorites1
-    },
-    {
-      username: 'example2',
-      favorites: favorites2
-    },
-  ]
+    const accountId = accountIdResult.rows[0].id;
 
-  res.status(200).json(response);
+    // get favorite movies
+    const result = await pgPool.query(
+      `SELECT
+        m.id AS movieID,
+        m.name,
+        m.year,
+        g.name AS genre
+      FROM favorites AS f
+      JOIN movies AS m ON f.movie_id = m.id
+      JOIN genres AS g ON m.genre_id = g.id
+      WHERE f.account_id = $1`,
+      [accountId]
+    );
+
+    const favoriteMovies = result.rows;
+
+    const response = {
+      username: username,
+      favorites: favoriteMovies
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 });
-
 
 // Start the server and listen on the specified port
 app.listen(port, () => {
