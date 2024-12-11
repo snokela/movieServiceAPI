@@ -80,7 +80,9 @@ app.post('/movies', async (req, res) => {
 
     // add movie to db
     const result = await pgPool.query(
-      `INSERT INTO movies (name, year, genre_id) VALUES ($1, $2, $3) RETURNING id, name, year, genre_id AS genreID`,
+      `INSERT INTO movies (name, year, genre_id)
+       VALUES ($1, $2, $3)
+       RETURNING id, name, year, genre_id AS genreID`,
       [name.trim(), year, genreId]
     );
 
@@ -114,7 +116,9 @@ app.post('/register', async (req, res) => {
 
     //add user to db
     const result = await pgPool.query(
-      `INSERT INTO accounts (name, username, password, birth_year) VALUES ($1, $2, $3, $4) RETURNING id, name, username, birth_year AS birthYear`,
+      `INSERT INTO accounts (name, username, password, birth_year)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, username, birth_year AS birthYear`,
       [name.trim(), username.trim(), password, birthYear]
     );
 
@@ -175,6 +179,16 @@ app.delete('/movies/:id', async (req, res) => {
       return res.status(404).json({ message: 'Movie does not exists' });
     }
 
+    // check if the movie was successfully removed from the database
+    const isDeleted = await pgPool.query(
+      `SELEC id FROM movies WHERE id = $1`,
+      [id]
+    );
+
+    if (isDeleted.rows.length > 0) {
+      return res.status(500).json({ message: 'Failed to delete the movie due to an unknown error' });
+    }
+
     const response = {
       message: "The movie has been deleted succesfully",
       movieid: result.rows[0].id
@@ -185,7 +199,6 @@ app.delete('/movies/:id', async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 });
-
 
 // GET ALL MOVIES AND GET MOVIES BY KEYWORD ENDPOINT WITH PAGINATION
 app.get('/movies', async (req, res) => {
@@ -225,14 +238,14 @@ app.get('/movies', async (req, res) => {
       totalResult = await pgPool.query(
         `SELECT COUNT(*) AS total
          FROM movies`
-        );
+      );
     } else {
       totalResult = await pgPool.query(
         `SELECT COUNT(*) AS total
          FROM movies
          WHERE name ILIKE $1`,
         [keyword]
-        );
+      );
     }
 
     const totalMovies = parseInt(totalResult.rows[0].total, 10);
