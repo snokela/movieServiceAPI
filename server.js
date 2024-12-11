@@ -188,28 +188,63 @@ app.delete('/movies/:id', async (req, res) => {
 });
 
 
-// GET ALL MOVIES AND GET MOVIES BY KEYWORD ENDPOINT
+// GET ALL MOVIES AND GET MOVIES BY KEYWORD ENDPOINT WITH PAGINATION
 app.get('/movies', async (req, res) => {
   let keyword = req.query.keyword || '';
-
-  // TODO: Implement pagination for movie results
+  const page = parseInt(req.query.page, 10) || 1;     //GET /movies?page=2 > sivu 2  TAI GET /movies > sivu 1
+  const limit = 10;
+  const offset = (page - 1) * limit
 
   try {
-
     let result;
     keyword = keyword.trim();
 
     if (!keyword) {
-      result = await pgPool.query(`SELECT id, name, year, genre_id AS genreID FROM movies`);
+      result = await pgPool.query(
+        `SELECT id, name, year, genre_id AS genreID
+         FROM movies
+         ORDER BY name
+         LIMIT $1 OFFSET $2`,
+        [limit, offset]
+      );
     } else {
       keyword = '%' + keyword.toLowerCase() + '%';
       result = await pgPool.query(
-        `SELECT id, name, year, genre_id AS genreID FROM movies WHERE LOWER(name) LIKE $1`,
-        [keyword]
+        `SELECT id, name, year, genre_id AS genreID
+         FROM movies
+         WHERE name ILIKE $1
+         ORDER BY name
+         LIMIT $2 OFFSET $3`,
+        [keyword, limit, offset]
       );
     }
 
-    const response = result.rows;
+    // calculating the total number of movies
+    let totalResult;
+
+    if (!keyword) {
+      totalResult = await pgPool.query(
+        `SELECT COUNT(*) AS total
+         FROM movies`
+        );
+    } else {
+      totalResult = await pgPool.query(
+        `SELECT COUNT(*) AS total
+         FROM movies
+         WHERE name ILIKE $1`,
+        [keyword]
+        );
+    }
+
+    const totalMovies = parseInt(totalResult.rows[0].total, 10);
+    const totalPages = Math.ceil(totalMovies / limit)
+
+    const response = {
+      movies: result.rows,
+      page,
+      totalPages,
+      totalMovies,
+    };
 
     res.json(response)
   } catch (error) {
