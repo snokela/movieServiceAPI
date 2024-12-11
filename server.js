@@ -13,7 +13,6 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Movie API');
 });
 
-
 // ADD MOVIE GENRE -ENDPOINT
 app.post('/genres', async (req, res) => {
   const { genre } = req.body;
@@ -252,7 +251,6 @@ app.get('/movies', async (req, res) => {
   }
 });
 
-
 // ADD MOVIE REVIEW -ENDPOINT
 app.post('/reviews', async (req, res) => {
   const { username, star, review, movieId } = req.body;
@@ -282,7 +280,6 @@ app.post('/reviews', async (req, res) => {
     res.status(201).json(response);
   } catch (error) {
     console.log(error.message);
-
     if (error.message === 'User not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -292,7 +289,6 @@ app.post('/reviews', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
-
 
 // ADD FAVORITE MOVIES FOR USER -ENDPOINT
 app.post('/favorites', async (req, res) => {
@@ -318,7 +314,6 @@ app.post('/favorites', async (req, res) => {
     res.status(201).json(response);
   } catch (error) {
     console.log(error.message);
-
     if (error.message === 'User not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -333,14 +328,9 @@ app.post('/favorites', async (req, res) => {
 app.get('/favorites/:username', async (req, res) => {
   const username = req.params.username;
 
-  if (!username) {
-    return res.status(400).json({ message: 'Username is required' });
-  }
-
   try {
     // check if the user exists
     const accountId = await getUserAccountId(pgPool, username);
-
     // get favorite movies
     const result = await pgPool.query(
       `SELECT
@@ -365,7 +355,6 @@ app.get('/favorites/:username', async (req, res) => {
     res.status(200).json(response);
   } catch (error) {
     console.log(error.message);
-
     if (error.message === 'User not found') {
       return res.status(404).json({ message: error.message });
     }
