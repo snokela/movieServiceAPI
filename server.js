@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 
-// add movie genre -endpoint
+// ADD MOVIE GENRE -ENDPOINT
 app.post('/genres', async (req, res) => {
   const { genre } = req.body;
   // validation
@@ -48,7 +48,7 @@ app.post('/genres', async (req, res) => {
 });
 
 
-// add new movie -endpoint
+// ADD NEW MOVIE -ENDPOINT
 app.post('/movies', async (req, res) => {
   const { name, year, genre } = req.body;
 
@@ -94,7 +94,7 @@ app.post('/movies', async (req, res) => {
   }
 });
 
-// add registering user (accounts) -endpoint
+// ADD REGISTERING USER -ENDPOINT
 app.post('/register', async (req, res) => {
   const { name, username, password, birthYear } = req.body;
 
@@ -128,7 +128,7 @@ app.post('/register', async (req, res) => {
 });
 
 
-// get movie by id -endpoint
+//GET MOVIE BY ID -ENDPOINT
 app.get('/movies/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -157,7 +157,7 @@ app.get('/movies/:id', async (req, res) => {
   }
 });
 
-// remove movie by id -endpoint
+// REMOVE MOVIE BY ID -ENDPOINT
 app.delete('/movies/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -188,7 +188,7 @@ app.delete('/movies/:id', async (req, res) => {
 });
 
 
-// get all movies -endpoint and get movies by keyword -endpoint
+// GET ALL MOVIES AND GET MOVIES BY KEYWORD ENDPOINT
 app.get('/movies', async (req, res) => {
   let keyword = req.query.keyword || '';
 
@@ -211,7 +211,6 @@ app.get('/movies', async (req, res) => {
 
     const response = result.rows;
 
-    // return movies
     res.json(response)
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -248,6 +247,7 @@ app.post('/reviews', async (req, res) => {
     res.status(201).json(response);
   } catch (error) {
     console.log(error.message);
+
     if (error.message === 'User not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -283,6 +283,7 @@ app.post('/favorites', async (req, res) => {
     res.status(201).json(response);
   } catch (error) {
     console.log(error.message);
+
     if (error.message === 'User not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -329,6 +330,7 @@ app.get('/favorites/:username', async (req, res) => {
     res.status(200).json(response);
   } catch (error) {
     console.log(error.message);
+
     if (error.message === 'User not found') {
       return res.status(404).json({ message: error.message });
     }
