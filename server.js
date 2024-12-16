@@ -100,7 +100,7 @@ app.post('/register', async (req, res) => {
   const { name, username, password, birthYear } = req.body;
 
   if (!name || !username || !password || !birthYear) {
-    return res.status(400).json({ message: 'Name, username, password and birth_year are required' });
+    return res.status(400).json({ message: 'Name, username, password and birthYear are required' });
   }
 
   try {
@@ -181,7 +181,7 @@ app.delete('/movies/:id', async (req, res) => {
 
     // check if the movie was successfully removed from the database
     const isDeleted = await pgPool.query(
-      `SELEC id FROM movies WHERE id = $1`,
+      `SELECT id FROM movies WHERE id = $1`,
       [id]
     );
 
@@ -284,7 +284,9 @@ app.post('/reviews', async (req, res) => {
 
     // add review to db
     const result = await pgPool.query(
-      `INSERT INTO reviews (account_id, movie_id, star, review) VALUES ($1, $2, $3, $4) RETURNING account_id, movie_id, star, review`,
+      `INSERT INTO reviews (account_id, movie_id, star, review)
+       VALUES ($1, $2, $3, $4)
+       RETURNING account_id AS accountId, movie_id AS movieId, star, review`,
       [accountId, movieId, star, review.trim()]
     );
 
@@ -308,7 +310,7 @@ app.post('/favorites', async (req, res) => {
   const { username, movieId } = req.body;
 
   if (!username || !movieId) {
-    return res.status(400).json({ message: 'Username and movie_id are required' });
+    return res.status(400).json({ message: 'Username and movieId are required' });
   }
 
   try {
@@ -318,7 +320,9 @@ app.post('/favorites', async (req, res) => {
 
     // add favorite to db
     const result = await pgPool.query(
-      `INSERT INTO favorites (account_id, movie_id) VALUES ($1, $2) RETURNING account_id, movie_id`,
+      `INSERT INTO favorites (account_id, movie_id)
+       VALUES ($1, $2)
+       RETURNING account_id AS accountId, movie_id AS movieId`,
       [accountId, movieId]
     );
 
