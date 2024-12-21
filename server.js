@@ -203,7 +203,7 @@ app.delete('/movies/:id', async (req, res) => {
 // GET ALL MOVIES AND GET MOVIES BY KEYWORD ENDPOINT WITH PAGINATION
 app.get('/movies', async (req, res) => {
   let keyword = req.query.keyword || '';
-  const page = parseInt(req.query.page, 10) || 1;     //GET /movies?page=2 > sivu 2  TAI GET /movies > sivu 1
+  const page = parseInt(req.query.page, 10) || 1;     //GET /movies?page=2 > page 2  TAI GET /movies > page 1
   const limit = 10;
   const offset = (page - 1) * limit
 
